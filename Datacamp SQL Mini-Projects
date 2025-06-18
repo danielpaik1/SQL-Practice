@@ -45,3 +45,14 @@ FROM public.critics_avg_year_rating INNER JOIN public.users_avg_year_rating ON p
 WHERE public.critics_avg_year_rating.avg_critic_score >9 OR public.users_avg_year_rating.avg_user_score>9
 ORDER BY public.critics_avg_year_rating.year;
 
+
+*--Project: Anayzing Industry Cardon Emission
+---Questions: 1. Identify unique companies and their total cardon footprint PCF for each indutry group
+SELECT 
+	industry_group, 
+	COUNT(DISTINCT company) AS num_companies,
+	ROUND(SUM(carbon_footprint_pcf),1) AS total_industry_footprint
+FROM product_emissions
+WHERE year IN (SELECT MAX(year) FROM public.product_emissions)
+GROUP BY industry_group
+ORDER BY total_industry_footprint DESC;  
