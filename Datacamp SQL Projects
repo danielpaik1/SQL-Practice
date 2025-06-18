@@ -1,0 +1,47 @@
+*--Project: International Debt Statistics
+---Questions: 1. # of Distinct countries
+              2. Country with highest amount of debt
+              3. Country with the lowest amount of repayments
+
+---1. # of Distinct countries
+SELECT COUNT(DISTINCT country_name) AS total_distinct_countries
+FROM public.international_debt;
+
+---2.Country with highest amount of debt
+SELECT country_name, SUM(debt) as total_debt
+FROM public.international_debt
+GROUP BY country_name
+ORDER BY total_debt DESC
+LIMIT 1;
+
+---3.Country with the lowest amount of repayments
+SELECT country_name, indicator_name, SUM(debt) AS lowest_repayment
+FROM public.international_debt
+WHERE indicator_code = 'DT.AMT.DLXF.CD'
+GROUP BY country_name, indicator_name
+ORDER BY lowest_repayment
+LIMIT 1;
+
+
+*--Project: International Debt Statistics
+---Questions: 1. best selling games
+              2. ten years with the highest avg critic score
+              3. years where critics and users broadly agreed games released were highly rated
+---1. best selling games
+SELECT *
+FROM public.game_sales
+ORDER BY games_sold DESC
+LIMIT 10;
+
+---2. ten years with the highest avg critic score
+SELECT year,num_games,avg_critic_score
+FROM public.critics_avg_year_rating
+ORDER BY avg_critic_score DESC
+LIMIT 10;
+
+---3. years where critics and users broadly agreed games released were highly rated
+SELECT public.critics_avg_year_rating.year, public.critics_avg_year_rating.num_games, public.critics_avg_year_rating.avg_critic_score, avg_user_score,(avg_user_score-avg_critic_score) AS diff
+FROM public.critics_avg_year_rating INNER JOIN public.users_avg_year_rating ON public.critics_avg_year_rating.year = public.users_avg_year_rating.year
+WHERE public.critics_avg_year_rating.avg_critic_score >9 OR public.users_avg_year_rating.avg_user_score>9
+ORDER BY public.critics_avg_year_rating.year;
+
